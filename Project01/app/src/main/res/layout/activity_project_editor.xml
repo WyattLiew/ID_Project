@@ -82,6 +82,41 @@
                 android:spinnerMode="dropdown"/>
         </LinearLayout>
     </LinearLayout>
+    <!-- Manager category -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- Label -->
+        <TextView
+            android:text="@string/category_assignedTo"
+            style="@style/CategoryStyle" />
+
+        <!-- Input fields -->
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:paddingLeft="4dp"
+            android:orientation="vertical">
+
+            <!-- Project Name field -->
+            <EditText
+                android:id="@+id/edit_project_manager"
+                android:hint="@string/project_manager_hint"
+                android:inputType="textCapWords"
+                style="@style/EditorFieldStyle" />
+
+            <!-- Name field -->
+            <EditText
+                android:id="@+id/edit_project_date"
+                android:hint="@string/pennding_date"
+                android:inputType="textCapWords"
+                style="@style/EditorFieldStyle" />
+
+        </LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -119,7 +154,7 @@
 
         <!-- Label -->
         <TextView
-            android:text="Descriptions of defect(s)"
+            android:text="@string/category_descriptions_of_defect_s"
             style="@style/CategoryStyle" />
 
         <LinearLayout
@@ -161,7 +196,7 @@
 
         <!-- Label -->
         <TextView
-            android:text="Comment"
+            android:text="@string/pending_comments"
             style="@style/CategoryStyle" />
 
         <LinearLayout

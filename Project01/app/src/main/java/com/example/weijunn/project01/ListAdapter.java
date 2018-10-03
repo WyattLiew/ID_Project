@@ -25,7 +25,7 @@ public class ListAdapter extends ArrayAdapter {
 
     static class LAyoutHandler{
 
-        TextView LOCATION,NAME,NUMBER;
+        TextView LOCATION,NAME,NUMBER,PROJMANAGER,PROJECT_DATE,DEFECT1,DEFECT2,DEFECT3,COMMENTS;
         ImageView IMG;
     }
 
@@ -56,6 +56,12 @@ public class ListAdapter extends ArrayAdapter {
             LayoutInflater layoutInflater = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row=layoutInflater.inflate(R.layout.item_project,parent,false);
             lAyoutHandler = new LAyoutHandler();
+            lAyoutHandler.PROJMANAGER = (TextView) row.findViewById(R.id.project_manager);
+            lAyoutHandler.PROJECT_DATE = (TextView)row.findViewById(R.id.project_date);
+            lAyoutHandler.DEFECT1 =(TextView)row.findViewById(R.id.project_defect_1);
+            lAyoutHandler.DEFECT2 =(TextView)row.findViewById(R.id.project_defect_2);
+            lAyoutHandler.DEFECT3 =(TextView)row.findViewById(R.id.project_defect_3);
+            lAyoutHandler.COMMENTS =(TextView)row.findViewById(R.id.project_comment);
             lAyoutHandler.IMG =(ImageView)row. findViewById(R.id.project_image);
             lAyoutHandler.LOCATION = (TextView)row.findViewById(R.id.project_location);
             lAyoutHandler.NAME = (TextView) row.findViewById(R.id.project_person);
@@ -71,6 +77,13 @@ public class ListAdapter extends ArrayAdapter {
         lAyoutHandler.LOCATION.setText(dataProvider.getLocation());
         lAyoutHandler.NAME.setText(dataProvider.getName());
         lAyoutHandler.NUMBER.setText(dataProvider.getNumber());
+        lAyoutHandler.PROJMANAGER.setText(dataProvider.getProjManager());
+        lAyoutHandler.PROJECT_DATE.setText(dataProvider.getDate());
+        lAyoutHandler.DEFECT1.setText(dataProvider.getDefect1());
+        lAyoutHandler.DEFECT2.setText(dataProvider.getDefect2());
+        lAyoutHandler.DEFECT3.setText(dataProvider.getDefect3());
+        lAyoutHandler.COMMENTS.setText(dataProvider.getComments());
+
 
         return row;
     }

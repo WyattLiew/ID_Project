@@ -47,7 +47,7 @@ import java.util.Locale;
 
 public class projectEditor extends AppCompatActivity {
 
-    EditText mProjectLocation, mContactName, mContactNumber, mDefect1, mDefect2, mDefect3, mPendingComment;
+    EditText mProjectLocation, mContactName, mContactNumber, mDefect1, mDefect2, mDefect3, mPendingComment, mProjectManager,mProjectDate;
 
     ProjectDbHelper mDbHelper;
     private Spinner mProjectTypeSpinner;
@@ -57,6 +57,10 @@ public class projectEditor extends AppCompatActivity {
     Integer REQUEST_CAMERA = 1, SELECT_FILE = 0;
     public static final int REQUEST_PERMISSION = 200;
     String imageFilePath ;
+
+    // Update data
+    private String selectedLocation , selectedComments;
+    private byte[] selectedIMG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,12 +76,15 @@ public class projectEditor extends AppCompatActivity {
         mDefect2 =(EditText) findViewById(R.id.defect_2);
         mDefect3 =(EditText) findViewById(R.id.defect_3);
         mPendingComment =(EditText) findViewById(R.id.pending_comment);
+        mProjectManager = (EditText) findViewById(R.id.edit_project_manager);
+        mProjectDate = (EditText) findViewById(R.id.edit_project_date);
+
+        projectImage = (ImageView) findViewById(R.id.project_img);
 
         mProjectTypeSpinner = (Spinner) findViewById(R.id.spinner_projectType);
 
         setupSpinner();
 
-        projectImage = (ImageView) findViewById(R.id.project_img);
 
         //Check permission
 
@@ -94,6 +101,11 @@ public class projectEditor extends AppCompatActivity {
                 SelectImage();
             }
         });
+
+
+        // Update data
+        initUpdate();
+
 
     }
 
@@ -291,12 +303,14 @@ public class projectEditor extends AppCompatActivity {
                             String conNameString = mContactName.getText().toString().trim();
                             String conNumString = mContactNumber.getText().toString().trim();
                             int conNumInt = Integer.parseInt(conNumString);
+                            String projManager = mProjectManager.getText().toString().trim();
+                            String projectDate = mProjectDate.getText().toString().trim();
                             String defect1String = mDefect1.getText().toString().trim();
                             String defect2String = mDefect2.getText().toString().trim();
                             String defect3String = mDefect3.getText().toString().trim();
                             String penCommentString = mPendingComment.getText().toString().trim();
                             Bitmap imgBitmap = ((BitmapDrawable)projectImage.getDrawable()).getBitmap();
-                            mDbHelper.insert_pending(locationString,conNameString,conNumInt,defect1String,defect2String,defect3String,penCommentString, Untils.getBytes(imgBitmap));
+                            mDbHelper.insert_pending(locationString,conNameString,conNumInt,projManager,projectDate,defect1String,defect2String,defect3String,penCommentString, Untils.getBytes(imgBitmap));
                             finish();
 
                         } else if (items[which].equals("Cancel")) {
@@ -318,4 +332,16 @@ public class projectEditor extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public void initUpdate(){
+        Intent receivedIntent = getIntent();
+        selectedLocation = receivedIntent.getStringExtra("location");
+        selectedComments = receivedIntent.getStringExtra("comments");
+        //selectedIMG = receivedIntent.getByteExtra("mIMG",);
+        //selectedIMG = receivedIntent.getByteArrayExtra("mIMG");
+        mProjectLocation.setText(selectedLocation);
+        mPendingComment.setText(selectedComments);
+        //projectImage.setImageBitmap((Untils.getImage(selectedIMG)));
+    }
+
 }

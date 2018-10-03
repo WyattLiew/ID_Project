@@ -26,6 +26,8 @@ public class ProjectDbHelper extends SQLiteOpenHelper {
     public final static String COLUMN_CONTACT_NAME = "con_Name";
     public final static String COLUMN_CONTACT_NUMBER = "con_Num";
     public final static String COLUMN_PROJECT_LOCATION ="location";
+    public final static String COLUMN_PROJECT_MANAGER = "projManager";
+    public final static String COLUMN_PROJECT_DATE = "projDate";
     public final static String COLUMN_DEFECT_1 = "defect_1";
     public final static String COLUMN_DEFECT_2 = "defect_2";
     public final static String COLUMN_DEFECT_3 = "defect_3";
@@ -42,6 +44,8 @@ public class ProjectDbHelper extends SQLiteOpenHelper {
             + COLUMN_CONTACT_NAME + " TEXT NOT NULL,"
             + COLUMN_PROJECT_LOCATION + " TEXT NOT NULL,"
             + COLUMN_CONTACT_NUMBER + " INTEGER NOT NULL,"
+            + COLUMN_PROJECT_MANAGER + " TEXT NOT NULL,"
+            + COLUMN_PROJECT_DATE + " TEXT NOT NULL,"
             + COLUMN_DEFECT_1 + " TEXT,"
             + COLUMN_DEFECT_2 + " TEXT,"
             + COLUMN_DEFECT_3 + " TEXT,"
@@ -66,13 +70,15 @@ public class ProjectDbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void insert_pending(String location, String conName, int conNum, String defect1, String defect2, String defect3, String comments, byte[] image) throws SQLException{
+    public void insert_pending(String location, String conName, int conNum, String projManager,String date,String defect1, String defect2, String defect3, String comments, byte[] image) throws SQLException{
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(COLUMN_PROJECT_LOCATION, location);
         values.put(COLUMN_CONTACT_NAME, conName);
         values.put(COLUMN_CONTACT_NUMBER, conNum);
+        values.put(COLUMN_PROJECT_MANAGER,projManager);
+        values.put(COLUMN_PROJECT_DATE,date);
         values.put(COLUMN_DEFECT_1, defect1);
         values.put(COLUMN_DEFECT_2, defect2);
         values.put(COLUMN_DEFECT_3, defect3);
@@ -85,10 +91,18 @@ public class ProjectDbHelper extends SQLiteOpenHelper {
 
     public Cursor viewData(){
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "Select defect_img,location,con_Name,con_Num from " + TABLE_NAME_PENDING;
+        String query = "Select * from " + TABLE_NAME_PENDING;
         Cursor cursor = db.rawQuery(query,null);
 
         return cursor;
+    }
+
+    public Cursor getItemID(String pos){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_NAME_PENDING +
+                " WHERE " + COLUMN_PROJECT_LOCATION+ " = '" + pos + "'";
+        Cursor data = db.rawQuery(query, null);
+        return data;
     }
 
 }
