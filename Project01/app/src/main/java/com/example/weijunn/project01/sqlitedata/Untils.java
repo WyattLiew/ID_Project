@@ -13,6 +13,8 @@ public class Untils {
     }
 
     public static Bitmap getImage(byte[] data){
+
         return BitmapFactory.decodeByteArray(data,0,data.length);
     }
+
 }

@@ -83,6 +83,7 @@ public class tab3_pending extends Fragment {
                 String comments= ((TextView)view.findViewById(R.id.project_person)).getText().toString();
 
                 String pos = parent.getItemAtPosition(position).toString();
+                Log.d(TAG, "onItemClick: The pos is: " + pos);
                 Toast.makeText(getActivity(), "No ID associated with that name= " + pos, Toast.LENGTH_SHORT).show();
 
                 Cursor data = projectDbHelper.getItemID(pos); //get the id associated with that name
@@ -103,6 +104,7 @@ public class tab3_pending extends Fragment {
         return rootView;
 
     }
+
 }
 
 

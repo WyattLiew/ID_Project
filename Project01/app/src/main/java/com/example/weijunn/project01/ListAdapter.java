@@ -1,5 +1,6 @@
 package com.example.weijunn.project01;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class ListAdapter extends ArrayAdapter {
     List list = new ArrayList();
-    public ListAdapter(@NonNull Context context, int resource) {
+    public ListAdapter(Context context, int resource) {
         super(context, resource);
     }
 
@@ -73,7 +74,8 @@ public class ListAdapter extends ArrayAdapter {
 
         DataProvider dataProvider = (DataProvider)this.getItem(position);
 
-        lAyoutHandler.IMG.setImageBitmap(Untils.getImage(dataProvider.getImg()));
+        //lAyoutHandler.IMG.setImageBitmap(Untils.getImage(dataProvider.getImg()));
+        lAyoutHandler.IMG.setImageBitmap(imageEfficiently.decodeSampledBitmapFromResource(dataProvider.getImg(),100,100));
         lAyoutHandler.LOCATION.setText(dataProvider.getLocation());
         lAyoutHandler.NAME.setText(dataProvider.getName());
         lAyoutHandler.NUMBER.setText(dataProvider.getNumber());

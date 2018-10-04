@@ -11,10 +11,11 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <ImageView
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:src="@mipmap/ic_launcher_round"
-        android:id="@+id/project_image"/>
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ic_launcher_round"
+            android:id="@+id/project_image"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

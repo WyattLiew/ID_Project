@@ -1,13 +1,16 @@
 package com.example.weijunn.project01;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -24,6 +27,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,9 +44,13 @@ import com.example.weijunn.project01.sqlitedata.Untils;
 import com.example.weijunn.project01.MainActivity;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class projectEditor extends AppCompatActivity {
@@ -58,6 +66,12 @@ public class projectEditor extends AppCompatActivity {
     public static final int REQUEST_PERMISSION = 200;
     String imageFilePath ;
 
+    // report string
+    String reportMessage;
+
+    // For attach image to email
+    File pic;
+
     // Update data
     private String selectedLocation , selectedComments;
     private byte[] selectedIMG;
@@ -67,22 +81,10 @@ public class projectEditor extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_editor);
 
-        mDbHelper = new ProjectDbHelper(this);
+        // init Id
+        initId();
 
-        mProjectLocation = (EditText) findViewById(R.id.edit_project_location);
-        mContactName =(EditText) findViewById(R.id.edit_client_name);
-        mContactNumber =(EditText) findViewById(R.id.edit_client_contact);
-        mDefect1 =(EditText) findViewById(R.id.defect_1);
-        mDefect2 =(EditText) findViewById(R.id.defect_2);
-        mDefect3 =(EditText) findViewById(R.id.defect_3);
-        mPendingComment =(EditText) findViewById(R.id.pending_comment);
-        mProjectManager = (EditText) findViewById(R.id.edit_project_manager);
-        mProjectDate = (EditText) findViewById(R.id.edit_project_date);
-
-        projectImage = (ImageView) findViewById(R.id.project_img);
-
-        mProjectTypeSpinner = (Spinner) findViewById(R.id.spinner_projectType);
-
+        // Spinner
         setupSpinner();
 
 
@@ -93,6 +95,7 @@ public class projectEditor extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     REQUEST_PERMISSION);
         }
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floatingActionButton2);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -121,6 +124,7 @@ public class projectEditor extends AppCompatActivity {
                 if (items[which].equals("Camera")) {
 
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
                     if (intent.resolveActivity(getPackageManager()) != null) {
                         File photoFile = null;
                         try{
@@ -129,11 +133,18 @@ public class projectEditor extends AppCompatActivity {
                         catch (IOException e){
                             e.printStackTrace();
                         }
-                        if(photoFile!=null) {
-                            Uri photoUri = FileProvider.getUriForFile(getApplicationContext(), "com.example.weijunn.project01.provider", photoFile);
-                            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                            startActivityForResult(intent, REQUEST_CAMERA);
-                        }
+                            if (photoFile != null) {
+                                Uri photoUri = FileProvider.getUriForFile(getApplicationContext(), "com.example.weijunn.project01.provider", photoFile);
+
+                                List<ResolveInfo> resolvedIntentActivities = getApplicationContext().getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                                for (ResolveInfo resolvedIntentInfo : resolvedIntentActivities) {
+                                    String packageName = resolvedIntentInfo.activityInfo.packageName;
+                                    getApplicationContext().grantUriPermission(packageName, photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                }
+
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                                startActivityForResult(intent, REQUEST_CAMERA);
+                            }
                     }
 
                 } else if (items[which].equals("Gallery")) {
@@ -164,11 +175,44 @@ public class projectEditor extends AppCompatActivity {
                 //projectImage.setImageBitmap(bmp);
 
                 projectImage.setImageURI(Uri.parse(imageFilePath));
+                Log.e("Attachment Path:", imageFilePath);
+
+                Bitmap imgBitmap = ((BitmapDrawable)projectImage.getDrawable()).getBitmap();
+
+
+                try {
+                    File root = Environment.getExternalStorageDirectory();
+                    if (root.canWrite()){
+                        pic = new File(root, "pic.png");
+                        FileOutputStream out = new FileOutputStream(pic);
+                        imgBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                        out.flush();
+                        out.close();
+                    }
+                } catch (IOException e) {
+                    Log.e("BROKEN", "Could not write file " + e.getMessage());
+                }
 
             } else if (requestCode == SELECT_FILE) {
                 Uri selectImageUri = data.getData();
                 projectImage.setImageURI(selectImageUri);
-            }
+                Bitmap imgBitmap = ((BitmapDrawable)projectImage.getDrawable()).getBitmap();
+
+
+                try {
+                    File root = Environment.getExternalStorageDirectory();
+                    if (root.canWrite()){
+                        pic = new File(root, "pic.png");
+                        FileOutputStream out = new FileOutputStream(pic);
+                        imgBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                        out.flush();
+                        out.close();
+                    }
+                } catch (IOException e) {
+                    Log.e("BROKEN", "Could not write file " + e.getMessage());
+                }
+
+        }
         }
     }
 
@@ -295,8 +339,31 @@ public class projectEditor extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (items[which].equals("Save and email")) {
+                            String locationString = mProjectLocation.getText().toString().trim();
+                            String conNameString = mContactName.getText().toString().trim();
+                            String conNumString = mContactNumber.getText().toString().trim();
+                            int conNumInt = Integer.parseInt(conNumString);
+                            String projManager = mProjectManager.getText().toString().trim();
+                            String projectDate = mProjectDate.getText().toString().trim();
+                            String defect1String = mDefect1.getText().toString().trim();
+                            String defect2String = mDefect2.getText().toString().trim();
+                            String defect3String = mDefect3.getText().toString().trim();
+                            String penCommentString = mPendingComment.getText().toString().trim();
+                            Bitmap imgBitmap = ((BitmapDrawable)projectImage.getDrawable()).getBitmap();
+                            mDbHelper.insert_pending(locationString,conNameString,conNumInt,projManager,projectDate,defect1String,defect2String,defect3String,penCommentString, Untils.getBytes(imgBitmap));
 
-                           // wait
+                            reportMessage = createReportSummary(locationString,conNameString,projManager,projectDate,defect1String,defect2String,defect3String,penCommentString);
+                            Intent emailIntent = new Intent (Intent.ACTION_SEND);
+                            //emailIntent.setData(Uri.parse("mailto:"));
+                            emailIntent.setType("image/*");
+                            //Uri imageUri = Uri.parse("Path:: " + imageFilePath);
+                            emailIntent.putExtra(Intent.EXTRA_STREAM,Uri.fromFile(pic));
+                            emailIntent.putExtra(Intent.EXTRA_SUBJECT,"Reports");
+                            emailIntent.putExtra(Intent.EXTRA_TEXT,reportMessage);
+                            if (emailIntent.resolveActivity(getPackageManager())!=null){
+                                startActivity(emailIntent);
+                            }
+                            finish();
 
                         } else if (items[which].equals("Save only")) {
                             String locationString = mProjectLocation.getText().toString().trim();
@@ -343,5 +410,42 @@ public class projectEditor extends AppCompatActivity {
         mPendingComment.setText(selectedComments);
         //projectImage.setImageBitmap((Untils.getImage(selectedIMG)));
     }
+
+    public void initId(){
+
+        mDbHelper = new ProjectDbHelper(this);
+
+        mProjectLocation = (EditText) findViewById(R.id.edit_project_location);
+        mContactName =(EditText) findViewById(R.id.edit_client_name);
+        mContactNumber =(EditText) findViewById(R.id.edit_client_contact);
+        mDefect1 =(EditText) findViewById(R.id.defect_1);
+        mDefect2 =(EditText) findViewById(R.id.defect_2);
+        mDefect3 =(EditText) findViewById(R.id.defect_3);
+        mPendingComment =(EditText) findViewById(R.id.pending_comment);
+        mProjectManager = (EditText) findViewById(R.id.edit_project_manager);
+        mProjectDate = (EditText) findViewById(R.id.edit_project_date);
+
+        projectImage = (ImageView) findViewById(R.id.project_img);
+
+        mProjectTypeSpinner = (Spinner) findViewById(R.id.spinner_projectType);
+    }
+
+    @SuppressLint("StringFormatInvalid")
+    private String createReportSummary(String location , String conName, String projManager, String date, String defect1, String defect2, String defect3, String comments){
+
+        String reportMessage = "Hi " + conName;
+        reportMessage += "\n" + "\n" + getString(R.string.report_summary_location,location);
+        reportMessage += "\n" + getString(R.string.report_summary_projManager,projManager);
+        reportMessage += "\n" + getString(R.string.report_summary_date,date);
+        reportMessage += "\n" + "\n" + getString(R.string.report_summary_description);
+        reportMessage += "\n" + getString(R.string.report_summary_defect_1,defect1);
+        reportMessage += "\n" + getString(R.string.report_summary_defect_2,defect2);
+        reportMessage += "\n" + getString(R.string.report_summary_defect_3,defect3);
+        reportMessage += "\n" + "\n" + getString(R.string.report_summary_comments,comments);
+        reportMessage += "\n" +"\n" + getString(R.string.report_summary_Thank_you);
+
+        return reportMessage;
+    }
+
 
 }

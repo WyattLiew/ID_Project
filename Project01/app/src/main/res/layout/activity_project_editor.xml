@@ -128,8 +128,10 @@
 
         <ImageView
             android:id="@+id/project_img"
-            android:layout_width="170dp"
-            android:layout_height="150dp"
+            android:layout_width="300dp"
+            android:layout_height="250dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
             android:src="@drawable/ic_launcher_background" />
     </LinearLayout>
 

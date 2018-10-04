@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Project Management</string>
     <string name="tab_text_1">Main</string>
     <string name="tab_text_2">Project</string>
@@ -60,6 +60,21 @@
     <string name="date_text">Date :</string>
     <string name="pennding_date">Date</string>
     <string name="project_manager_hint">Project manager</string>
+
+    <!--
+    For report summary projectEditor.java
+    -->
+
+    <string name="report_summary_location">Project location: <xliff:g id="location" example="Singapore">%s</xliff:g></string>
+    <string name="report_summary_projManager">Project manager: <xliff:g id="projManager" example="Abang">%s</xliff:g></string>
+    <string name="report_summary_date">Inspection date: <xliff:g id="date" example="11/12/2018">%s</xliff:g></string>
+    <string name="report_summary_defect_1">1. <xliff:g id="defect1" example="issues">%s</xliff:g></string>
+    <string name="report_summary_defect_2">2. <xliff:g id="defect2" example="issues">%s</xliff:g></string>
+    <string name="report_summary_defect_3">3. <xliff:g id="defect3" example="issues">%s</xliff:g></string>
+    <string name="report_summary_comments">Comments: <xliff:g id="comment" example="comments">%s</xliff:g></string>
+    <string name="report_summary_Thank_you">Thank you</string>
+    <string name="report_summary_description">Description of defect(s) : </string>
+
 
 
 </resources>
