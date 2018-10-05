@@ -74,7 +74,7 @@
     <string name="report_summary_comments">Comments: <xliff:g id="comment" example="comments">%s</xliff:g></string>
     <string name="report_summary_Thank_you">Thank you</string>
     <string name="report_summary_description">Description of defect(s) : </string>
-
+    <string name="action_update">action_update</string>
 
 
 </resources>

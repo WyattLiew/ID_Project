@@ -25,6 +25,7 @@ public class tab1_main extends Fragment{
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),projectEditor.class);
                 startActivity(intent);
+
             }
         });
 

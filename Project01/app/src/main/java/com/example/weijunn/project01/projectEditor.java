@@ -73,8 +73,14 @@ public class projectEditor extends AppCompatActivity {
     File pic;
 
     // Update data
-    private String selectedLocation , selectedComments;
-    private byte[] selectedIMG;
+    private String selectedLocation , selectedComments, selectedName,selectedNum,selectedprojManager,selectedprojDate,selectedDefect1,selectedDefect2,selectedDefect3;
+    private int HideMenu;
+    private Bitmap selectedImage;
+    private boolean HIDE_MENU =false;
+
+    private MenuItem itemToHide;
+    private MenuItem itemToShow;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,9 +111,10 @@ public class projectEditor extends AppCompatActivity {
             }
         });
 
-
         // Update data
         initUpdate();
+
+
 
 
     }
@@ -321,8 +328,23 @@ public class projectEditor extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu options from the res/menu/menu_editor.xml file.
         // This adds menu items to the app bar.
-        getMenuInflater().inflate(R.menu.menu_editor, menu);
-        return true;
+            getMenuInflater().inflate(R.menu.menu_editor, menu);
+            return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if(Build.VERSION.SDK_INT > 11) {
+            invalidateOptionsMenu();
+            if (HIDE_MENU) {
+                menu.findItem(R.id.action_update).setVisible(true);
+                menu.findItem(R.id.action_save).setVisible(false);
+            }else {
+                menu.findItem(R.id.action_update).setVisible(false);
+                menu.findItem(R.id.action_save).setVisible(true);
+            }
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -400,15 +422,36 @@ public class projectEditor extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void initUpdate(){
+    public void initUpdate() {
         Intent receivedIntent = getIntent();
         selectedLocation = receivedIntent.getStringExtra("location");
+        selectedName = receivedIntent.getStringExtra("conName");
+        selectedNum = receivedIntent.getStringExtra("conNum");
+        selectedprojManager = receivedIntent.getStringExtra("projManager");
+        selectedprojDate = receivedIntent.getStringExtra("projDate");
+        selectedDefect1 = receivedIntent.getStringExtra("defect1");
+        selectedDefect2 = receivedIntent.getStringExtra("defect2");
+        selectedDefect3 = receivedIntent.getStringExtra("defect3");
         selectedComments = receivedIntent.getStringExtra("comments");
-        //selectedIMG = receivedIntent.getByteExtra("mIMG",);
-        //selectedIMG = receivedIntent.getByteArrayExtra("mIMG");
+        selectedImage = receivedIntent.getParcelableExtra("projImage");
+        HideMenu = receivedIntent.getIntExtra("HideMenu",0);
+
+
         mProjectLocation.setText(selectedLocation);
+        mContactName.setText(selectedName);
+        mContactNumber.setText(selectedNum);
+        mProjectManager.setText(selectedprojManager);
+        mProjectDate.setText(selectedprojDate);
+        mDefect1.setText(selectedDefect1);
+        mDefect2.setText(selectedDefect2);
+        mDefect3.setText(selectedDefect3);
         mPendingComment.setText(selectedComments);
-        //projectImage.setImageBitmap((Untils.getImage(selectedIMG)));
+        projectImage.setImageBitmap(selectedImage);
+
+        // Hide save menu
+        if(HideMenu == 1){
+        HIDE_MENU = true;
+        }
     }
 
     public void initId(){

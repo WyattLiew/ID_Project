@@ -100,7 +100,7 @@ public class ProjectDbHelper extends SQLiteOpenHelper {
     public Cursor getItemID(String pos){
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_NAME_PENDING +
-                " WHERE " + COLUMN_PROJECT_LOCATION+ " = '" + pos + "'";
+                " WHERE " + COLUMN_PROJECT_LOCATION + " = '" + pos + "'";
         Cursor data = db.rawQuery(query, null);
         return data;
     }

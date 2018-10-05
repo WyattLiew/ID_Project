@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.nfc.Tag;
@@ -13,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,7 +25,7 @@ import android.widget.Toast;
 
 import com.example.weijunn.project01.sqlitedata.DataProvider;
 import com.example.weijunn.project01.sqlitedata.ProjectDbHelper;
-
+import com.example.weijunn.project01.sqlitedata.Untils;
 
 
 public class tab3_pending extends Fragment {
@@ -34,6 +36,8 @@ public class tab3_pending extends Fragment {
     Cursor cursor;
     ListAdapter listAdapter;
     private static final String TAG = "tab3_pending";
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,11 +83,25 @@ public class tab3_pending extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //String pos =((TextView)view.findViewById(R.id.project_location)).getText().toString();
-                String comments= ((TextView)view.findViewById(R.id.project_person)).getText().toString();
+                String pos =((TextView)view.findViewById(R.id.project_location)).getText().toString();
+                String conName= ((TextView)view.findViewById(R.id.project_person)).getText().toString();
+                String conNum = ((TextView)view.findViewById(R.id.project_number)).getText().toString();
+                String projManager = ((TextView)view.findViewById(R.id.project_manager)).getText().toString();
+                String projectDate= ((TextView)view.findViewById(R.id.project_date)).getText().toString();
+                String defect1= ((TextView)view.findViewById(R.id.project_defect_1)).getText().toString();
+                String defect2= ((TextView)view.findViewById(R.id.project_defect_2)).getText().toString();
+                String defect3= ((TextView)view.findViewById(R.id.project_defect_3)).getText().toString();
+                String comments= ((TextView)view.findViewById(R.id.project_comment)).getText().toString();
+                //Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.id.project_image);
 
-                String pos = parent.getItemAtPosition(position).toString();
-                Log.d(TAG, "onItemClick: The pos is: " + pos);
+                 ImageView projImage = (ImageView) view.findViewById(R.id.project_image);
+                 projImage.setDrawingCacheEnabled(true);
+                 projImage.buildDrawingCache();
+                 final Bitmap bitmap = projImage.getDrawingCache();
+
+                 int HideMenu = 1;
+
+
                 Toast.makeText(getActivity(), "No ID associated with that name= " + pos, Toast.LENGTH_SHORT).show();
 
                 Cursor data = projectDbHelper.getItemID(pos); //get the id associated with that name
@@ -95,7 +113,16 @@ public class tab3_pending extends Fragment {
                     Log.d(TAG, "onItemClick: The ID is: " + itemID);
                     Intent editScreenIntent = new Intent(getActivity(), projectEditor.class);
                     editScreenIntent.putExtra("location", pos);
+                    editScreenIntent.putExtra("conName", conName);
+                    editScreenIntent.putExtra("conNum", conNum);
+                    editScreenIntent.putExtra("projManager", projManager);
+                    editScreenIntent.putExtra("projDate", projectDate);
+                    editScreenIntent.putExtra("defect1", defect1);
+                    editScreenIntent.putExtra("defect2", defect2);
+                    editScreenIntent.putExtra("defect3", defect3);
                     editScreenIntent.putExtra("comments",comments);
+                    editScreenIntent.putExtra("projImage", bitmap);
+                    editScreenIntent.putExtra("HideMenu",HideMenu);
                     startActivity(editScreenIntent);
                 }
 
