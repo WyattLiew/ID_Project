@@ -9,7 +9,7 @@
     android:paddingLeft="18dp"
     android:paddingRight="18dp"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".LoginActivity">
+    tools:context=".registerActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -30,15 +30,34 @@
                 android:src="@drawable/common_google_signin_btn_icon_dark" />
 
             <EditText
-                android:id="@+id/editTextEmail"
+                android:id="@+id/registerEditTextName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="70dp"
                 android:background="@android:color/transparent"
-                android:drawableLeft="@drawable/ic_person_black_24dp"
+                android:drawableLeft="@drawable/ic_face_white_24dp"
                 android:drawablePadding="12dp"
                 android:ems="10"
-                android:hint="Username"
+                android:hint="full name"
+                android:textColor="#fff"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                android:padding="8dp"
+                android:textColorHint="#fff" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f9d7db" />
+            <EditText
+                android:id="@+id/registerEditTextEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:drawableLeft="@drawable/ic_email_white_24dp"
+                android:drawablePadding="12dp"
+                android:ems="10"
+                android:hint="email"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:padding="8dp"
@@ -51,7 +70,7 @@
                 android:background="#f9d7db" />
 
             <EditText
-                android:id="@+id/editTextPassword"
+                android:id="@+id/registerEditTextPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -59,40 +78,42 @@
                 android:drawableLeft="@drawable/ic_lock_black_24dp"
                 android:drawablePadding="12dp"
                 android:ems="10"
-                android:hint="********"
-                android:textColor="#fff"
+                android:hint="password"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:padding="8dp"
-                android:textColorHint="#fff" />
+                android:textColorHint="#fff"
+                android:textColor="#fff"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#f9d7db" />
 
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:padding="8dp"
-                android:text="Remember me"
-                android:textColor="#fff" />
-
-            <Button
-                android:id="@+id/user_login"
-                style="@style/Base.TextAppearance.AppCompat.Body1"
+            <EditText
+                android:id="@+id/registerEditTextPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/background_login"
-                android:padding="16dp"
-                android:text="Log in"
-                android:textAllCaps="false"
-                android:textColor="#f16f7d" />
+                android:layout_marginTop="4dp"
+                android:background="@android:color/transparent"
+                android:drawableLeft="@drawable/ic_phone_black_24dp"
+                android:drawablePadding="12dp"
+                android:ems="10"
+                android:hint="phone"
+                android:inputType="phone"
+                android:maxLines="1"
+                android:padding="8dp"
+                android:textColorHint="#fff"
+                android:textColor="#fff"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f9d7db" />
+
 
             <Button
-                android:id="@+id/user_signup"
+                android:id="@+id/user_register"
                 style="@style/Base.TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -106,6 +127,7 @@
                 android:textSize="18dp" />
 
             <TextView
+                android:id="@+id/already_have_an_account"
                 style="@style/Base.TextAppearance.AppCompat.Body2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -113,7 +135,7 @@
                 android:layout_marginBottom="16dp"
                 android:clickable="true"
                 android:padding="16dp"
-                android:text="forget your password?"
+                android:text="Already have an account? Login"
                 android:textColor="#fff" />
 
         </LinearLayout>
@@ -121,7 +143,7 @@
     </ScrollView>
 
     <ProgressBar
-        android:id="@+id/login_progressBar"
+        android:id="@+id/register_progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"

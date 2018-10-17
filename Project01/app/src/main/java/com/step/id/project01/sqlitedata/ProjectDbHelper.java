@@ -6,10 +6,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
-import static com.step.id.project01.sqlitedata.projectAddOnContract.*;
-import static com.step.id.project01.sqlitedata.projectContract.*;
+import static com.step.id.project01.sqlitedata.projectAddOnContract.ProjectAddOnEntry;
+import static com.step.id.project01.sqlitedata.projectContract.ProjectEntry;
 
 public class ProjectDbHelper extends SQLiteOpenHelper {
 
@@ -208,7 +207,7 @@ public class ProjectDbHelper extends SQLiteOpenHelper {
 
         return cursor;
     }
-    public Cursor getProjectItemID(long pos){
+    public Cursor getProjectItemID(String pos){
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM " + ProjectEntry.TABLE_NAME_PROJECT +
                 " WHERE " + ProjectEntry._ID + " = '" + pos + "'";

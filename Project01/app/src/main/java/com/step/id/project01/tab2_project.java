@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,12 +12,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
-
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.step.id.project01.Project.projectList;
 import com.step.id.project01.RecyclerView.RecyclerTouchListener;
+import com.step.id.project01.RecyclerView.projectRecyclerAdapter;
 import com.step.id.project01.sqlitedata.ProjectDbHelper;
 import com.step.id.project01.sqlitedata.newProjectProvider;
 
@@ -30,9 +35,12 @@ public class tab2_project extends Fragment {
     private ProjectDbHelper projectDbHelper;
     private projectRecyclerAdapter projectRecyclerAdapter;
     private Cursor cursor;
-    private View view;
+    private View emptyView;
     private RecyclerView projectRecyclerView;
     private ArrayList<newProjectProvider> listNewProjectProviders = new ArrayList<>();
+
+    //Firebasse
+    DatabaseReference databaseNewProject, projectsRef;
 
 
     @Override
@@ -45,33 +53,31 @@ public class tab2_project extends Fragment {
         projectRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         projectRecyclerView.setHasFixedSize(true);
 
-        View emptyView = rootView.findViewById(R.id.project_empty_view);
+        emptyView = rootView.findViewById(R.id.project_empty_view);
+        databaseNewProject = FirebaseDatabase.getInstance().getReference();
+        projectsRef = databaseNewProject.child("projects").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        initObject();
+        //initObject();
+        onRetrieve();
 
-        if (listNewProjectProviders.isEmpty()) {
-            projectRecyclerView.setVisibility(View.GONE);
-            emptyView.setVisibility(View.VISIBLE);
-        }
-        else {
-            projectRecyclerView.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.GONE);
-        }
+
+
 
         projectRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity().getApplicationContext(), projectRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Long rowid = listNewProjectProviders.get(position).getId();
+                String rowid = listNewProjectProviders.get(position).getId();
                 Cursor data = projectDbHelper.getProjectItemID(rowid);
-                Log.d(TAG,"The row id is: "+rowid);
+                Log.d(TAG, "The row id is: " + rowid);
                 int itemID = -1;
                 while (data.moveToNext()) {
                     itemID = data.getInt(0);
-                } if (itemID > -1) {
+                }
+                if (itemID > -1) {
                     Log.d(TAG, "onItemClick: The ID is: " + itemID);
-                    Intent intent = new Intent (getActivity().getApplicationContext(),projectList.class);
-                    intent.putExtra("id",itemID);
-                    Log.d(TAG,"The row id is: "+rowid);
+                    Intent intent = new Intent(getActivity().getApplicationContext(), projectList.class);
+                    intent.putExtra("id", itemID);
+                    Log.d(TAG, "The row id is: " + rowid);
                     startActivity(intent);
 
                 }
@@ -85,14 +91,14 @@ public class tab2_project extends Fragment {
                 String description = listNewProjectProviders.get(position).getDescription();
                 String conName = listNewProjectProviders.get(position).getName();
                 String conNum = listNewProjectProviders.get(position).getNumber();
-                String location =listNewProjectProviders.get(position).getLocation();
+                String location = listNewProjectProviders.get(position).getLocation();
                 String date = listNewProjectProviders.get(position).getDate();
                 String notes = listNewProjectProviders.get(position).getNotes();
 
                 int HideMenu = 1;
-                Long rowid = listNewProjectProviders.get(position).getId();
+                String rowid = listNewProjectProviders.get(position).getId();
                 Cursor data = projectDbHelper.getProjectItemID(rowid);
-                Log.d(TAG,"The row id is: "+rowid);
+                Log.d(TAG, "The row id is: " + rowid);
 
                 int itemID = -1;
                 while (data.moveToNext()) {
@@ -105,48 +111,84 @@ public class tab2_project extends Fragment {
                     date = data.getString(5);
                     notes = data.getString(7);
 
-                } if (itemID > -1) {
+                }
+                if (itemID > -1) {
                     Log.d(TAG, "onItemClick: The ID is: " + itemID);
-                    Intent intent = new Intent (getActivity().getApplicationContext(),projectEditor.class);
-                    intent.putExtra("id",itemID);
-                    intent.putExtra("title",title);
-                    intent.putExtra("description",description);
-                    intent.putExtra("conName",conName);
-                    intent.putExtra("conNum",conNum);
-                    intent.putExtra("location",location);
-                    intent.putExtra("date",date);
-                    intent.putExtra("notes",notes);
+                    Intent intent = new Intent(getActivity().getApplicationContext(), projectEditor.class);
+                    intent.putExtra("id", itemID);
+                    intent.putExtra("title", title);
+                    intent.putExtra("description", description);
+                    intent.putExtra("conName", conName);
+                    intent.putExtra("conNum", conNum);
+                    intent.putExtra("location", location);
+                    intent.putExtra("date", date);
+                    intent.putExtra("notes", notes);
                     intent.putExtra("HideMenu", HideMenu);
-                    Log.d(TAG,"The row id is: "+rowid);
+                    Log.d(TAG, "The row id is: " + rowid);
                     startActivity(intent);
                 }
             }
         }));
 
+
         return rootView;
     }
 
-    public void initObject(){
 
-        projectDbHelper = new ProjectDbHelper(getActivity().getApplicationContext());
-        sqLiteDatabase = projectDbHelper.getReadableDatabase();
-        cursor = projectDbHelper.viewProjectData();
+    public void onRetrieve() {
 
-        if (cursor.moveToFirst()) {
-            do {
-                newProjectProvider newProjectProvider = new newProjectProvider(cursor.getLong(0), cursor.getString(1)
-                        , cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5)
-                        , cursor.getString(6), cursor.getString(7));
-                listNewProjectProviders.add(newProjectProvider);
+        projectsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-            } while (cursor.moveToNext());
-            projectDbHelper.close();
+                //listNewProjectProviders.clear();
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    newProjectProvider projects = dataSnapshot1.getValue(newProjectProvider.class);
+                    listNewProjectProviders.add(projects);
+                }
+                projectRecyclerAdapter = new projectRecyclerAdapter(getActivity(), listNewProjectProviders);
+                projectRecyclerView.setAdapter(projectRecyclerAdapter);
 
-        }
+                if (listNewProjectProviders.isEmpty()) {
+                    projectRecyclerView.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
+                } else {
+                    projectRecyclerView.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.GONE);
+                }
 
-        projectRecyclerAdapter = new projectRecyclerAdapter(listNewProjectProviders);
-        projectRecyclerView.setAdapter(projectRecyclerAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
+/**
+ public void initObject() {
+
+ projectDbHelper = new ProjectDbHelper(getActivity().getApplicationContext());
+ sqLiteDatabase = projectDbHelper.getReadableDatabase();
+ cursor = projectDbHelper.viewProjectData();
+
+ if (cursor.moveToFirst()) {
+ do {
+ newProjectProvider newProjectProvider = new newProjectProvider(cursor.getString(0), cursor.getString(1)
+ , cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5)
+ , cursor.getString(6), cursor.getString(7));
+ listNewProjectProviders.add(newProjectProvider);
+
+ } while (cursor.moveToNext());
+ projectDbHelper.close();
+
+ }
+
+ //projectRecyclerAdapter = new projectRecyclerAdapter(listNewProjectProviders);
+ //projectRecyclerView.setAdapter(projectRecyclerAdapter);
+
+ }
+ **/
 
 }

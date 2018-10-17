@@ -26,8 +26,7 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:largeHeap="true"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".defectEditor"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -53,15 +52,21 @@
         </activity>
         <activity
             android:name=".Project.projectAddOn"
-            android:label="Project Add On">
-        </activity>
-
-        <activity android:name=".LoginActivity"
+            android:label="Project Add On"></activity>
+        <activity
+            android:name=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".registerActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+
         </activity>
 
         <provider
@@ -73,6 +78,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
     </application>
 
 </manifest>

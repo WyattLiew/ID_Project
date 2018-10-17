@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
 
     private void initid() {
         findViewById(R.id.user_login).setOnClickListener(this);
+        findViewById(R.id.user_signup).setOnClickListener(this);
         progressBar =(ProgressBar) findViewById(R.id.login_progressBar);
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
         editTextPassword =(EditText) findViewById(R.id.editTextPassword);
@@ -91,6 +92,9 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
             case R.id.user_login:
                 userLogin();
                 break;
+            case  R.id.user_signup:
+                Intent intent = new Intent (getApplicationContext(),registerActivity.class);
+                startActivity(intent);
         }
     }
 }

@@ -1,39 +1,26 @@
 package com.step.id.project01.sqlitedata;
 
-import java.io.Serializable;
-
-public class newProjectProvider implements Serializable {
-    private String location;
-    private String name;
-    private String number;
+public class newProjectProvider {
+    private String id;
     private String title;
     private String description;
-    private String notes;
+    private String name;
+    private String number;
     private String date;
-    private long id;
+    private String location;
+    private String notes;
 
-    public String getLocation() {
-        return location;
+
+    public newProjectProvider(){
+
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public String getId() {
+        return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -52,12 +39,20 @@ public class newProjectProvider implements Serializable {
         this.description = description;
     }
 
-    public String getNotes() {
-        return notes;
+    public String getName() {
+        return name;
     }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
     }
 
     public String getDate() {
@@ -68,22 +63,30 @@ public class newProjectProvider implements Serializable {
         this.date = date;
     }
 
-    public long getId() {
-        return id;
+    public String getLocation() {
+        return location;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
-    public newProjectProvider(long id, String title, String description,String name,String number,String date, String location,String notes){
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public newProjectProvider(String id, String title, String description, String name, String number, String date, String location, String notes){
         this.id =id;
         this.title = title;
         this.description =description;
         this.name = name;
         this.number = number;
-        this.location = location;
         this.date = date;
+        this.location = location;
         this.notes = notes;
     }
 }

@@ -6,11 +6,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
+import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,9 +19,12 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.step.id.project01.sqlitedata.ProjectDbHelper;
+import com.step.id.project01.sqlitedata.newProjectProvider;
 
 import java.util.Calendar;
 
@@ -41,6 +43,9 @@ public class projectEditor extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener mDateSetListener;
 
     String date = "Select a date";
+
+    //Firebase
+    DatabaseReference databaseNewProject;
 
     //Warn the user about unsaved changes
     private boolean mPendingHasChanged = false;
@@ -67,7 +72,7 @@ public class projectEditor extends AppCompatActivity {
         //Check unsaved changes
         initCheckUnsavedChanges();
 
-
+        databaseNewProject = FirebaseDatabase.getInstance().getReference("Projects");
     }
 
     private void initDate() {
@@ -158,7 +163,14 @@ public class projectEditor extends AppCompatActivity {
                             } else if (projectDate.matches(date)) {
                                 Toast.makeText(projectEditor.this, "Please select a date.", Toast.LENGTH_SHORT).show();
                             } else {
-                                mDbHelper.insert_project(locationString, conNameString, conNumString, projectDate, descriptionString, titleString, noteString);
+                                String id = databaseNewProject.push().getKey();
+                                String UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                                newProjectProvider newProjectProvider = new newProjectProvider(id,titleString,descriptionString,conNameString,conNumString,projectDate,locationString,noteString);
+                                databaseNewProject.child(UID).child(id).setValue(newProjectProvider);
+
+                                Toast.makeText(getApplicationContext(),"Project added",Toast.LENGTH_SHORT).show();
+                               // mDbHelper.insert_project(locationString, conNameString, conNumString, projectDate, descriptionString, titleString, noteString);
                                 Intent intent = new Intent(projectEditor.this, MainActivity.class);
                                 startActivity(intent);
                             }
@@ -170,6 +182,7 @@ public class projectEditor extends AppCompatActivity {
                 builder_add.show();
                 return true;
             case R.id.project_update:
+                /**
                 final CharSequence[] items_update = {"Update", "Cancel"};
                 AlertDialog.Builder builder_update = new AlertDialog.Builder(projectEditor.this);
                 builder_update.setTitle("Select options");
@@ -201,6 +214,7 @@ public class projectEditor extends AppCompatActivity {
                 });
                 builder_update.show();
                 return true;
+                 **/
             // Respond to a click on the "Delete" menu option
             case R.id.project_delete:
                 DialogInterface.OnClickListener deleteButtonClickListener =
